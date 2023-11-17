@@ -1,0 +1,5 @@
+Purpose: investigate ways to improve VERDICT fitting
+
+- Start by looking at simulated data
+- Fitting improvements: regularization, priors (of cell radii distribution), Rician noise accounting/removal
+- In vivo data from INNOVATE trial
