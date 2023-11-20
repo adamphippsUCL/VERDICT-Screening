@@ -16,31 +16,31 @@ Vs = [...
     V0; V2;...
     V0; V3;...
     V0; V4;...
-    V0; V5
+%     V0; V5
     ];
 
 
 %% Define tissue parameters
 
 % Volume fractions
-fIC = 0.4;
-fVASC = 0.1;
+fIC = 0.5;
+fVASC = 0.0;
 fEES = 1-fIC-fVASC;
 
 % Spheres distribution
 tissueRmin = 0.1;
-tissueRmax = 15;
+tissueRmax = 15.1;
 tissuenR = 100; % Number of radii
 
 Rs = linspace(tissueRmin, tissueRmax, tissuenR);
 
-muR = 11;
-sigmaR = 1;
+muR = 6;
+sigmaR = 2;
 
 fRs = normpdf(Rs, muR, sigmaR);
 
 % Noise level
-NoiseSigma = 0.01 ;
+NoiseSigma = 0.05;
 
 
 %% Simulate signal
@@ -60,13 +60,13 @@ Y = zeros([1,1,length(SignalsNoisy)]);
 Y(1,1,:) = SignalsNoisy;
 
 % Rs used in fitting
-fitRs = linspace(0.1, 15.1, 25);
+fitRs = linspace(0.1, 15.1, 17);
 
 % Number of comparments
 ncompart = 1;
 
 % Noisy Matrix bool
-NoisyMatrix = false;
+NoisyMatrix = true;
 
 
 [fIC_fit, fEES_fit, fVASC_fit, R, rmse, A, t, opt, x] = verdict_fit( ...

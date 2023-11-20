@@ -1,0 +1,224 @@
+% MATLAB code to evaluate fitting performance over multiple noise instances
+
+% To start with, set fIC and radii distribution => Will vary these later
+
+%% Define VERDICT scheme
+
+V0 = [1,2,0];
+V2 = [11.4, 31.3, 500];
+V3 = [23.9, 43.8, 1500];
+V4 = [12.4, 32.3, 2000];
+
+% Addition of b=0
+Vs = [...
+    V0; V2;...
+    V0; V3;...
+    V0; V4;...
+    ];
+
+
+%% Define tissue parameters
+
+% Volume fractions
+fIC = 0.5;
+fVASC = 0.0;
+fEES = 1-fIC-fVASC;
+
+% Spheres distribution
+tissueRmin = 0.1;
+tissueRmax = 15.1;
+tissuenR = 100; % Number of radii
+
+% % Normal distributon
+% Rs = linspace(tissueRmin, tissueRmax, tissuenR);
+% 
+% muR = 7;
+% sigmaR = 3;
+% 
+% fRs = normpdf(Rs, muR, sigmaR);
+
+% Random uniform distribution
+Rmin = 5;
+Rmax = 10;
+nR = 100;
+Rs = Rmin + (Rmax-Rmin)*rand(1,100);
+fRs = 1/nR
+
+%% Define noise
+
+% Noise level (b=0 SNR)
+NoiseSigma = 0.05;
+
+% Number of instances
+Ninst = 1000;
+
+
+%% Define fitting settings
+
+% Noisy matrix
+NoisyMatrix = false;
+
+% Regularisation parameters
+lambda1 = sqrt(0.01); 
+lambda2 = sqrt(0.001);
+
+% Rs used in fitting
+fitRs = linspace(0.1, 15.1, 17);
+
+% Number of comparments
+ncompart = 1;
+
+
+%% Iterate over noise instances
+
+% Results
+fIC_fits = zeros(Ninst,1);
+fRs_fits = zeros(Ninst, length(fitRs));
+
+
+for indx = 1:Ninst
+
+
+    %% Simulate signal
+    
+    % simulate signal
+    [Signals, Vscheme] = SimulateSignal(Vs, fIC, fVASC, Rs, fRs);
+    
+    % Add noise
+    SignalsNoisy = abs( AddNoise(Signals, NoiseSigma = NoiseSigma) );
+    SignalsNoisy(1:2:end) = 1;
+    
+    
+    %% Apply fitting
+    
+    % Construct Y matrix
+    Y = zeros([1,1,length(SignalsNoisy)]);
+    Y(1,1,:) = SignalsNoisy;
+
+
+    [fIC_fit, fEES_fit, fVASC_fit, R, rmse, A, t, opt, x] = verdict_fit( ...
+        ...
+        Vscheme, ...
+        Y, ...
+        ncompart = ncompart, ...
+        Rs = fitRs, ...
+        solver = 'histreg',...
+        NoisyMatrix = NoisyMatrix,...
+        NoiseSigma = NoiseSigma, ...
+        lambda1 = lambda1, ...
+        lambda2 = lambda2 ...
+        );
+    
+    % Record key results
+    fIC_fits(indx) = fIC_fit;
+    fRs_fits(indx,:) = x(1:length(fitRs));
+
+end
+
+
+%% Evaluation of fitting performance
+
+% == fIC fitting
+
+fIC_errors = fIC_fits - fIC;
+
+fig1 = figure;
+scatter(ones(size(fIC_errors)), ...
+    fIC_errors, Marker ='*', ...
+    MarkerEdgeAlpha = 0.1, ...
+    MarkerFaceAlpha = 0.1)
+hold on
+boxplot(fIC_errors)
+ylim([-0.6,0.6])
+xlim([0.8,1.2])
+grid on
+
+text(0.8,-0.7, ...
+    ['Mean ' num2str(mean(fIC_errors)) ...
+    ', Median ' num2str(median(fIC_errors)) ...
+    ', std ' num2str(std(fIC_errors))] ...
+    )
+
+text(0.8, 0.65, [ '(fIC error) lambda1 ' num2str(lambda1) ...
+    ', lambda2 ' num2str(lambda2) ...
+    ', Noisy matrix ' char(string(NoisyMatrix)) ...
+    ])
+
+saveas(fig1, 'Figures/fIC_error.png')
+
+% == Radii fitting accuracy
+
+
+% Normalised squared error with histology distribution
+fRs_squared_errors = zeros(Ninst,1);
+AverageRadii = zeros(Ninst,1);
+
+for indx = 1:Ninst
+
+    % Normalised fitted fR distribution 
+    norm_fRs_fit = fRs_fits(indx,:)/sum(fRs_fits(indx,:));
+
+    % Average radii
+    AverageRadii(indx) = sum(fitRs.*norm_fRs_fit);
+
+    % True fRs
+    TruefRs = normpdf(fitRs, muR, sigmaR)/sum(normpdf(fitRs, muR, sigmaR));
+    
+    % Squared error
+    fRs_squared_error = sum((norm_fRs_fit - TruefRs).^2);
+    fRs_squared_errors(indx) = fRs_squared_error;
+
+end
+
+fig2 = figure;
+scatter(ones(size(fRs_squared_errors)), ...
+    fRs_squared_errors, Marker ='*', ...
+    MarkerEdgeAlpha = 0.1, ...
+    MarkerFaceAlpha = 0.1)
+hold on
+boxplot(fRs_squared_errors)
+ylim([-0.05,1])
+xlim([0.8,1.2])
+grid on
+
+text(0.8,-0.15, ...
+    ['Mean ' num2str(mean(fRs_squared_errors)) ...
+    ', Median ' num2str(median(fRs_squared_errors)) ...
+    ', std ' num2str(std(fRs_squared_errors))] ...
+    )
+
+text(0.8, 1.05, [ '(fRs squared error) lambda1 ' num2str(lambda1) ...
+    ', lambda2 ' num2str(lambda2) ...
+    ', Noisy matrix ' char(string(NoisyMatrix)) ...
+    ])
+
+saveas(fig2, 'Figures/fRs_error.png')
+
+% Average radii
+AverageRadiiErrors = AverageRadii - muR;
+
+fig3 = figure;
+scatter(ones(size(AverageRadiiErrors)), ...
+    AverageRadiiErrors, Marker ='*', ...
+    MarkerEdgeAlpha = 0.1, ...
+    MarkerFaceAlpha = 0.1)
+hold on
+boxplot(AverageRadiiErrors)
+ylim([-10,10])
+xlim([0.8,1.2])
+grid on
+
+text(0.8,-10.5, ...
+    ['Mean ' num2str(mean(AverageRadiiErrors)) ...
+    ', Median ' num2str(median(AverageRadiiErrors)) ...
+    ', std ' num2str(std(AverageRadiiErrors))] ...
+    )
+
+text(0.8, 10.5, [ '(Average radii error) lambda1 ' num2str(lambda1) ...
+    ', lambda2 ' num2str(lambda2) ...
+    ', Noisy matrix ' char(string(NoisyMatrix)) ...
+    ])
+
+saveas(fig3, 'Figures/R_error.png')
+
+
