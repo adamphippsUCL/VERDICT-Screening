@@ -12,26 +12,10 @@ OutputFolder = string(fileread("..\..\output_folder.txt"));
 
 %%% ======== Model types
 
-% %% Model Gaussian fixed Rs
-% 
-% % Model type
-% ModelType = "Fixed Gaussian Rs, mu = 10, sigma = 4";
-% solver = 'lsqnonnegTikhonov';
-% 
-% % Run VERDICT processing
-% for indx = 1:size(PatNums,1)
-%     PatNum = PatNums(indx);
-%     disp(["----------->" PatNums(indx)])
-%     VERDICT(PatNum, ModelType, solver = solver, parent_folder=OutputFolder);
-% end
-% 
-% pause(60)
-
-
-% Model 1: Original model 
+%% RDI Model
 
 % Model type
-ModelType = "Original VERDICT";
+ModelType = "RDI";
 solver = 'lsqnonnegTikhonov';
 
 % Run VERDICT processing
@@ -42,6 +26,22 @@ for indx = 1:size(PatNums,1)
 end
 
 pause(60)
+
+
+% % Model 1: Original model 
+% 
+% % Model type
+% ModelType = "Original VERDICT";
+% solver = 'lsqnonnegTikhonov';
+% 
+% % Run VERDICT processing
+% for indx = 1:size(PatNums,1)
+%     PatNum = PatNums(indx);
+%     disp(["----------->" PatNums(indx)])
+%     VERDICT(PatNum, ModelType, solver = solver, parent_folder=OutputFolder);
+% end
+% 
+% pause(60)
 
 % % Model 2: No VASC model
 % 

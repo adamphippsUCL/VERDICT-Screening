@@ -165,7 +165,7 @@ def saveNiftimask(
 def extractROIfICs(
     PatNum,
     ROIName,
-    ModelNum,
+    ModelName,
     parameter = 'fIC',
     MaskType = 'numpy',
     VERDICT_output_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\VERDICT outputs",
@@ -178,8 +178,9 @@ def extractROIfICs(
     
     '''                
     
+    
     # Load fIC array
-    fIC = loadmat(f'{VERDICT_output_path}/{PatNum}/Model {ModelNum}/{parameter}.mat')[parameter]
+    fIC = loadmat(f'{VERDICT_output_path}/{PatNum}/{ModelName}/{parameter}.mat')[parameter]
     
     # remove infinities
     fIC[fIC == np.inf] = 0
@@ -217,10 +218,10 @@ def extractROIfICs(
         None
         
     # Save as npy
-    np.save(f'{output_path}/{PatNum}/{ROIName}/Model {ModelNum}.npy', ROI_fIC)
+    np.save(f'{output_path}/{PatNum}/{ROIName}/{ModelName}.npy', ROI_fIC)
     
     # Save fIC image as mha
-    sitk.WriteImage(sitk.GetImageFromArray(fIC), f'{VERDICT_output_path}/{PatNum}/Model {ModelNum}/{parameter}.mha')
+    sitk.WriteImage(sitk.GetImageFromArray(fIC), f'{VERDICT_output_path}/{PatNum}/{ModelName}/{parameter}.mha')
     
 # Function to read biopsy results     
 def readBiopsyResults(
@@ -260,14 +261,14 @@ def readBiopsyResults(
 def avgROIfICs(
     PatNums, 
     ROIName,
-    ModelNum,
+    ModelName,
     avg_type = 'median',
     results_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\fIC results"
     
 ):
     
     # Extract list of fIC results filenames
-    fIC_fnames = glob.glob(f'{results_path}/*/{ROIName}/Model {ModelNum}.npy')
+    fIC_fnames = glob.glob(f'{results_path}/*/{ROIName}/{ModelName}.npy')
 
     # For each file, extract patient number and calculate average fIC
     avgfICs = []
@@ -303,7 +304,7 @@ def avgROIfICs(
         elif avg_type == 'max':
             avg_fIC = np.max(fICs)
         elif avg_type == 'contours':
-            avg_fIC = contour_areas(PatNum, ModelNum, ROIName)
+            avg_fIC = contour_areas(PatNum, ModelName, ROIName)
             
         else:
             print('Incorrect input, default to mean')
@@ -320,17 +321,17 @@ def avgROIfICs(
     
     # Create directory
     try:
-        os.makedirs(f'{results_path}/{avg_type} fIC Dataframes/Model {ModelNum}')
+        os.makedirs(f'{results_path}/{avg_type} fIC Dataframes/{ModelName}')
     except:
         None
         
     # Save dataframe as pickle
-    with open(f'{results_path}/{avg_type} fIC Dataframes/Model {ModelNum}/{avg_type}_fIC_df.pickle', 'wb') as handle:
+    with open(f'{results_path}/{avg_type} fIC Dataframes/{ModelName}/{avg_type}_fIC_df.pickle', 'wb') as handle:
         pickle.dump(fIC_DF, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
         
     # Save as matlab structure
-    savemat(f'{results_path}/{avg_type} fIC Dataframes/Model {ModelNum}/{avg_type}_fIC_df.mat', {'fICs': fIC_DF.to_dict(orient = 'list')})
+    savemat(f'{results_path}/{avg_type} fIC Dataframes/{ModelName}/{avg_type}_fIC_df.mat', {'fICs': fIC_DF.to_dict(orient = 'list')})
     # # Save dataframe as txt
     # with open(f'{results_path}/Average fIC Dataframes/Model {ModelNum}/average_fIC_df.txt', 'w') as f:
     #     f.write(str(fIC_DF))
@@ -339,7 +340,7 @@ def avgROIfICs(
 def ROIvariance(
     PatNums,
     ROIName,
-    ModelNum,
+    ModelName,
     results_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\fIC results"
 ):
     
@@ -351,7 +352,7 @@ def ROIvariance(
         
         try:    
             # Load ROI fICs
-            fICs = np.load(f'fIC results/{PatNum}/{ROIName}/Model {ModelNum}.npy') 
+            fICs = np.load(f'fIC results/{PatNum}/{ROIName}/{ModelName}.npy') 
 
             # Variance
             var = np.var(fICs)
@@ -372,17 +373,17 @@ def ROIvariance(
     
     # Create directory
     try:
-        os.makedirs(f'{results_path}/variance fIC Dataframes/Model {ModelNum}')
+        os.makedirs(f'{results_path}/variance fIC Dataframes/{ModelName}')
     except:
         None
         
     # Save dataframe as pickle
-    with open(f'{results_path}/variance fIC Dataframes/Model {ModelNum}/variance_fIC_df.pickle', 'wb') as handle:
+    with open(f'{results_path}/variance fIC Dataframes/{ModelName}/variance_fIC_df.pickle', 'wb') as handle:
         pickle.dump(fICvarDF, handle, protocol=pickle.HIGHEST_PROTOCOL)  
     
        
 def fIC_ROC(
-    ModelNum,
+    ModelName,
     avg_type,
     results_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\fIC results"
     ):
@@ -400,7 +401,7 @@ def fIC_ROC(
     '''
     
     # Read in average fIC dataframe
-    with open(f'{results_path}/{avg_type} fIC Dataframes/Model {ModelNum}/{avg_type}_fIC_df.pickle', 'rb') as handle:
+    with open(f'{results_path}/{avg_type} fIC Dataframes/{ModelName}/{avg_type}_fIC_df.pickle', 'rb') as handle:
         fIC_DF = pickle.load(handle)
         
     # Read in biopsy results dataframe

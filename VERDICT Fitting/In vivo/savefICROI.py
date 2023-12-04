@@ -13,6 +13,7 @@ OutputFolder = str(open('output_folder.txt', 'r').read())
 PatNums = [os.path.basename(path) for path in 
            glob.glob(r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs\*")]
 
+print(PatNums)
 for PatNum in PatNums:
 
     # Load mha ROI

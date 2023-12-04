@@ -26,14 +26,14 @@ OutputFolder = str(open('output_folder.txt', 'r').read())
 ROIdrawer = 'NT'
 
 # Define ROI averaging type
-avg_type = 'median'
+avg_type = 'mean'
 
 # Define Model numbers to analyse
-ModelNums = [999]#, 2, 11, 15]#[0,0.5,1,11,12,2,15,19,20,21]
+ModelNames= ['RDI']#, 2, 11, 15]#[0,0.5,1,11,12,2,15,19,20,21]
 
 
 # Loop over model numbers
-for ModelNum in ModelNums:
+for ModelName in ModelNames:
 
     # ROI Name
     if ROIdrawer == 'NT':
@@ -56,7 +56,7 @@ for ModelNum in ModelNums:
         # print(f'== {PatNum}')
         
         # # Excluding ROIs
-        if PatNum in ['INN_291']:
+        if PatNum in []:
             continue
         
         # If ROI mask exists, try and extract ROI 
@@ -67,11 +67,12 @@ for ModelNum in ModelNums:
             if ROIdrawer == 'NT':
                 fIC_analysis.extractROIfICs(PatNum, 
                                             ROIName = ROIName, 
-                                            ModelNum = ModelNum,
+                                            ModelName = ModelName,
                                             parameter = 'fIC',
                                             MaskType = 'numpy',
                                             VERDICT_output_path = rf"{OutputFolder}\VERDICT outputs",
                                             ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs",
+                                            # ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\ROIs",
                                             output_path = rf"{OutputFolder}\fIC results"
                                             )
             
@@ -103,7 +104,7 @@ for ModelNum in ModelNums:
     fIC_analysis.avgROIfICs(
         PatNums = PatNums, 
         ROIName = ROIName, 
-        ModelNum = ModelNum, 
+        ModelName = ModelName, 
         avg_type = avg_type,
         results_path = rf"{OutputFolder}\fIC results"
         )
@@ -116,7 +117,7 @@ for ModelNum in ModelNums:
 
     # Apply ROC analysis
     ResultsDF, fpr, tpr, thresholds, roc_auc = fIC_analysis.fIC_ROC( 
-                                                                    ModelNum = ModelNum, 
+                                                                    ModelName = ModelName, 
                                                                     avg_type = avg_type,
                                                                     results_path = rf"{OutputFolder}\fIC results"
                                                                     )
@@ -129,22 +130,22 @@ for ModelNum in ModelNums:
 
     # Make folder
     try:
-        os.makedirs(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}')
+        os.makedirs(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}')
     except: 
         None
         
     # Save results dataframe as pickle
-    with open(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/Results_DF.pickle', 'wb') as handle:
+    with open(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/Results_DF.pickle', 'wb') as handle:
         pickle.dump(ResultsDF, handle, protocol=pickle.HIGHEST_PROTOCOL)
         
     # Save results data frame as matlab structure
-    savemat(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/ResultsDF.mat', {'ResultsDF': ResultsDF.to_dict(orient = 'list')})
+    savemat(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/ResultsDF.mat', {'ResultsDF': ResultsDF.to_dict(orient = 'list')})
         
     # Save ROC results
-    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/fpr.npy', fpr)
-    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/tpr.npy', tpr)
-    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/thresholds.npy', thresholds)
-    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/Model {ModelNum}/{avg_type}/roc_auc.npy', roc_auc)
+    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/fpr.npy', fpr)
+    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/tpr.npy', tpr)
+    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/thresholds.npy', thresholds)
+    np.save(f'{OutputFolder}/ROC results/{ROIdrawer}/{ModelName}/{avg_type}/roc_auc.npy', roc_auc)
     
     print(roc_auc)
 

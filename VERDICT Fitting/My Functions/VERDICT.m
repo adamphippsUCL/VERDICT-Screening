@@ -11,7 +11,7 @@ arguments
     pat_num % INNOVATE patient number
     model_type % Type of VERDICT model to fit
     opts.INNOVATE_path = "D:\UCL PhD Imaging Data\INNOVATE VERDICT\" % Path to INNOVATE imaging folder
-    opts.parent_folder = "C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs" % Parent folder to save outputs
+    opts.parent_folder = "C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs" % Parent folder to save outputs
     opts.solver = 'lsqnonnegTikhonov'
 end
 
@@ -73,7 +73,7 @@ elseif strcmp(model_type, 'Model 0.5')
     
 
 % Model 1: Original VERDICT
-elseif strcmp(model_type, 'Model 1')
+elseif strcmp(model_type, "Original VERDICT")
     
     % Run VERDICT processing code
     [scheme, Y, fIC, fEES, fVASC, R, rmse] = verdict_Adam( ...
@@ -433,10 +433,9 @@ elseif strcmp(model_type, 'Model 21')
         );
 
 
-% Model 999:  RDI fitting, No VASC, No 3000
-elseif strcmp(model_type, 'Model 999')
+% Model: RDI fitting, No VASC, No 3000
+elseif strcmp(model_type, 'RDI')
 
-    ncompart = 1;
     fitting_excludebvals = [90, 3000];
 
     fitting = 'RDI';
@@ -446,14 +445,13 @@ elseif strcmp(model_type, 'Model 999')
     [scheme, Y, fIC, fEES, fVASC, R, rmse] = verdict_Adam( ...
         convertStringsToChars(DICOM_path), ...
         convertStringsToChars(output_path), ...
-        ncompart = ncompart, ...
         fitting_excludebvals = fitting_excludebvals,...
         solver = opts.solver,...    
         fitting = fitting...
         );
 else
     disp('Incorrect model specification')
-    exit()
+
 end
 
 

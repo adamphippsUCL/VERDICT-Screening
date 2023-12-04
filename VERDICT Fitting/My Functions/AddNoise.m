@@ -1,6 +1,6 @@
 % Function to add complex noise to signal
 
-function signalsNoisy = addnoise_Adam(signals, opts)
+function signalsNoisy = AddNoise(signals, opts)
 
 % ---------------------------
 

@@ -66,7 +66,7 @@ fitRs = linspace(0.1, 15.1, 17);
 ncompart = 1;
 
 % Noisy Matrix bool
-NoisyMatrix = true;
+NoisyMatrix = false;
 
 
 [fIC_fit, fEES_fit, fVASC_fit, R, rmse, A, t, opt, x] = verdict_fit( ...

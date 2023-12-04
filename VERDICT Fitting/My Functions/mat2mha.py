@@ -5,33 +5,46 @@ import SimpleITK as sitk
 from scipy.io import loadmat
 import numpy as np
 import sys
+import os
+import glob
 
 # Read output folder
 OutputFolder = str(open('output_folder.txt', 'r').read())
 
-# Define Patient ID, model type, and volume name
-PatNum = 'INN_221'
-ModelNumbers = [999]#list(range(0,15))
+# Find list of patient numbers
+PatNums = [os.path.basename(path) for path in 
+           glob.glob(r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs\*")]
+PatNums = ['INN_175']
+print(PatNums)
+
+ModelNames = ['RDI']#list(range(0,15))
 
 VolumeName = 'fIC'
 
-for ModelNum in ModelNumbers:
-    
-    try:
-        # Load .mat file
-        volume = loadmat(f'{OutputFolder}/VERDICT outputs/{PatNum}/Model {ModelNum}/{VolumeName}.mat')[VolumeName]
-        # remove infinities
-        volume[volume == np.inf] = 0
-        # Remove nan
-        volume[np.isnan(volume)] = 0
-        
-        # Change image orientation
-        volume = np.moveaxis( volume , -1, 0)  
+normalise = True
 
-        # Save as mha file
-        sitk.WriteImage( sitk.GetImageFromArray(volume), f'{OutputFolder}/VERDICT outputs/{PatNum}/Model {ModelNum}/{VolumeName}.mha' )
+for PatNum in PatNums:
+
+    for ModelName in ModelNames:
         
-    except: None
+        try:
+            # Load .mat file
+            volume = loadmat(f'{OutputFolder}/VERDICT outputs/{PatNum}/{ModelName}/{VolumeName}.mat')[VolumeName]
+            # remove infinities
+            volume[volume == np.inf] = 0
+            # Remove nan
+            volume[np.isnan(volume)] = 0
+            
+            # Change image orientation
+            volume = np.moveaxis( volume , -1, 0)  
+            
+            if normalise:
+                volume[volume>1] = 1
+
+            # Save as mha file
+            sitk.WriteImage( sitk.GetImageFromArray(volume), f'{OutputFolder}/VERDICT outputs/{PatNum}/{ModelName}/{VolumeName}.mha' )
+            
+        except: None
 
 
 

@@ -58,45 +58,34 @@ maxR = 15.1;
 Rs = linspace(minR, maxR, nR);
 
 
-muRs = [4, 8, 12];
+muRs = [6,8,10];
 sigmaRs = [2,2,2];
 
-nRDists = length(muRs);
+for RDistindx 
 
-normfRs = zeros(nRDists, nR);
+% Distribution 1
+muR = 8;
+sigmaR = 2;
+fR1s = normpdf(Rs, muR, sigmaR);
+normfR1s = fR1s/sum(fR1s);
 
-for RDistIndx = 1:length(muRs)
-    
-    muR = muRs(RDistIndx);
-    sigmaR = sigmaRs(RDistIndx);
-    fRs = normpdf(Rs, muR, sigmaR);
-    normfRs(RDistIndx,:) = fRs/sum(fRs);
+% Distribution 2
+muR = 7;
+sigmaR = 2;
+fR2s = normpdf(Rs, muR, sigmaR);
+normfR2s = fR2s/sum(fR2s);
 
-end
-% 
-% % Distribution 1
-% muR = 8;
-% sigmaR = 2;
-% fR1s = normpdf(Rs, muR, sigmaR);
-% normfR1s = fR1s/sum(fR1s);
-% 
-% % Distribution 2
-% muR = 7;
-% sigmaR = 2;
-% fR2s = normpdf(Rs, muR, sigmaR);
-% normfR2s = fR2s/sum(fR2s);
-% 
-% % Distribution 3
-% muR = 6;
-% sigmaR = 2;
-% fR3s = normpdf(Rs, muR, sigmaR);
-% normfR3s = fR3s/sum(fR3s);
-% 
-% % fRs
-% normfRs = [normfR1s; normfR2s; normfR3s];
-% 
-% % Number of radii distributions
-% nRDists = size(normfRs,1);
+% Distribution 3
+muR = 6;
+sigmaR = 2;
+fR3s = normpdf(Rs, muR, sigmaR);
+normfR3s = fR3s/sum(fR3s);
+
+% fRs
+normfRs = [normfR1s; normfR2s; normfR3s];
+
+% Number of radii distributions
+nRDists = size(normfRs,1);
 
 % === Define extracellular diffusivities
 EES_Ds = [2]; % µm^2/ms

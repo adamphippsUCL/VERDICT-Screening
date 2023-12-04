@@ -12,6 +12,7 @@ V4 = [12.4, 32.3, 2000];
 % Addition of b=0
 Vs = [...
     V0; V2;...
+    V0; V2;...
     V0; V3;...
     V0; V4;...
     ];
@@ -20,7 +21,7 @@ Vs = [...
 %% Define tissue parameters
 
 % Volume fractions
-fIC = 0.7;
+fIC = 0.4;
 fVASC = 0.0;
 fEES = 1-fIC-fVASC;
 
@@ -32,14 +33,14 @@ tissuenR = 100; % Number of radii
 % Normal distributon
 Rs = linspace(tissueRmin, tissueRmax, tissuenR);
 
-muR = 8;
+muR = 10;
 sigmaR = 2;
 
 fRs = normpdf(Rs, muR, sigmaR);
 
 
 % Noise level
-NoiseSigma = 0.05;
+NoiseSigma = 0.01;
 
 
 %% Simulate signal
