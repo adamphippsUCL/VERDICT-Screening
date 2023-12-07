@@ -14,10 +14,10 @@ OutputFolder = str(open('output_folder.txt', 'r').read())
 # Find list of patient numbers
 PatNums = [os.path.basename(path) for path in 
            glob.glob(r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs\*")]
-PatNums = ['INN_175']
+# PatNums = ['BAR_003']
 print(PatNums)
 
-ModelNames = ['RDI']#list(range(0,15))
+ModelNames = ['Original VERDICT', 'RDIex903000']#, 'noVASCex903000']#list(range(0,15))
 
 VolumeName = 'fIC'
 
@@ -43,6 +43,8 @@ for PatNum in PatNums:
 
             # Save as mha file
             sitk.WriteImage( sitk.GetImageFromArray(volume), f'{OutputFolder}/VERDICT outputs/{PatNum}/{ModelName}/{VolumeName}.mha' )
+            
+            del volume
             
         except: None
 

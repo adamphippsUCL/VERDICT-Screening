@@ -12,7 +12,7 @@ OutputFolder = str(open('output_folder.txt', 'r').read())
 # Find list of patient numbers
 PatNums = [os.path.basename(path) for path in 
            glob.glob(r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs\*")]
-
+PatNums = ['BAR_018']
 print(PatNums)
 for PatNum in PatNums:
 

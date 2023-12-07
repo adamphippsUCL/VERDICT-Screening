@@ -58,7 +58,7 @@ maxR = 15.1;
 Rs = linspace(minR, maxR, nR);
 
 
-muRs = [4, 8, 12];
+muRs = [4,8,12];
 sigmaRs = [2,2,2];
 
 nRDists = length(muRs);
@@ -192,6 +192,8 @@ locinmask = find(opt.mask) ;
 
 for ip = 1:length(locinmask)  % can be parallelised
 
+    
+    
     ind = locinmask(ip) ;
     y = Y(ind,:) ;
 

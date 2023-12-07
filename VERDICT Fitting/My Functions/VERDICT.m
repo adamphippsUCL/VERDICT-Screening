@@ -315,7 +315,7 @@ elseif strcmp(model_type, 'Model 14')
 
 
 % Model 15: No VASC, No 3000
-elseif strcmp(model_type, 'Model 15')
+elseif strcmp(model_type, 'noVASCex903000')
 
     ncompart = 1;
     fitting_excludebvals = [90, 3000];
@@ -434,7 +434,7 @@ elseif strcmp(model_type, 'Model 21')
 
 
 % Model: RDI fitting, No VASC, No 3000
-elseif strcmp(model_type, 'RDI')
+elseif strcmp(model_type, 'RDIex903000')
 
     fitting_excludebvals = [90, 3000];
 

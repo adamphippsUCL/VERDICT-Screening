@@ -255,34 +255,34 @@ for iterIndx = 1:Niter
 end
 
 % 
-% figure;
-% scatter(simmuRs, OrigAll_bias)
-% ylim([-0.3,0.3])
-% xlabel('muR')
-% ylabel('bias')
-% title('Original All')
-% 
-% figure;
-% scatter(simmuRs, RDIEx903000_bias)
-% ylim([-0.3,0.3])
-% xlabel('muR')
-% ylabel('bias')
-% title('RDI ex. 90, 3000')
+figure;
+scatter(simmuRs, OrigAll_bias)
+ylim([-0.3,0.3])
+xlabel('muR')
+ylabel('bias')
+title('Original All')
+
+figure;
+scatter(simmuRs, RDIEx903000_bias)
+ylim([-0.3,0.3])
+xlabel('muR')
+ylabel('bias')
+title('RDI ex. 90, 3000')
 
 
-% figure;
-% scatter(simfICs, OrigAll_bias)
-% ylim([-0.3,0.3])
-% xlabel('fIC')
-% ylabel('bias')
-% title('Original All')
-% 
-% figure;
-% scatter(simfIC, RDIEx903000_bias)
-% ylim([-0.3,0.3])
-% xlabel('fIC')
-% ylabel('bias')
-% title('RDI ex. 90, 3000')
+figure;
+scatter(simfICs, OrigAll_bias)
+ylim([-0.3,0.3])
+xlabel('fIC')
+ylabel('bias')
+title('Original All')
+
+figure;
+scatter(simfICs, RDIEx903000_bias)
+ylim([-0.3,0.3])
+xlabel('fIC')
+ylabel('bias')
+title('RDI ex. 90, 3000')
 
 
 figure;

@@ -26,10 +26,10 @@ OutputFolder = str(open('output_folder.txt', 'r').read())
 ROIdrawer = 'NT'
 
 # Define ROI averaging type
-avg_type = 'mean'
+avg_type = 'median'
 
 # Define Model numbers to analyse
-ModelNames= ['RDI']#, 2, 11, 15]#[0,0.5,1,11,12,2,15,19,20,21]
+ModelNames= ['RDIex903000']#, 2, 11, 15]#[0,0.5,1,11,12,2,15,19,20,21]
 
 
 # Loop over model numbers
@@ -56,7 +56,7 @@ for ModelName in ModelNames:
         # print(f'== {PatNum}')
         
         # # Excluding ROIs
-        if PatNum in []:
+        if PatNum in ['INN_291', 'INN_167']:
             continue
         
         # If ROI mask exists, try and extract ROI 
@@ -71,8 +71,8 @@ for ModelName in ModelNames:
                                             parameter = 'fIC',
                                             MaskType = 'numpy',
                                             VERDICT_output_path = rf"{OutputFolder}\VERDICT outputs",
-                                            ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs",
-                                            # ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\ROIs",
+                                            ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\ISMRM Submission\Outputs\ROIs",
+                                            # ROI_path = r"C:\Users\adam\OneDrive - University College London\UCL PhD\PhD Year 1\Projects\VERDICT Screening\Outputs\fIC ROIs",
                                             output_path = rf"{OutputFolder}\fIC results"
                                             )
             
