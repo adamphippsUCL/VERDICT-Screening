@@ -10,11 +10,10 @@ nscan = 3;
 bvals = [];
 
 
-
 %% Iterate optimisation function
 
 % Number of optimisation iterations
-Niter = 10;
+Niter = 40;
 
 % Loop
 scan_params = [];

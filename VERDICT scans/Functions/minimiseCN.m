@@ -18,6 +18,7 @@ arguments
 
     % Max gradient strength
     opts.Gmax = 60
+    opts.t180 = 2 % 180 pulse duration
 
 end
 
@@ -121,6 +122,9 @@ end
 
 % Define bounding b vector
 b = zeros(nscan,1);
+for scanIndx = 1:nscan
+    b(scanIndx) = -opts.t180;
+end
 
 
 % == Non-linear constraint (Gradient strength)

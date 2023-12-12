@@ -5,7 +5,7 @@ function [c, ceq] = gradnonlcon(x, opts)
 
     arguments
         x % scan parameter vector
-        opts.Gmax = 55*10^(-6) % T/mm
+        opts.Gmax = 60*10^(-6) % T/mm
         opts.gamma = 2.675221874*(10^8)% s/T* 1e+08;
     end
     
@@ -16,6 +16,7 @@ function [c, ceq] = gradnonlcon(x, opts)
     for scanIndx =1:nscan
 
         b = x(3*(scanIndx-1)+3);
+
         delta = x(3*(scanIndx-1)+1)*(10^(-3));
         Delta = x(3*(scanIndx-1)+2)*(10^(-3));
 

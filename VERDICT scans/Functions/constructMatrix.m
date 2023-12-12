@@ -206,9 +206,9 @@ switch params.fitting_type
         end
 
 end
+% 
 
-
-%% Augmented matrix for regularisation
+% Augmented matrix for regularisation
 
 switch params.regulariser
 

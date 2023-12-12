@@ -1,0 +1,113 @@
+function FisherInfo = FisherInfoRician(paramIndx, paramGrid, paramSpacings, scan_params, opts)
+
+% An attempt at accounting for Rician noise by adding on Rician noise
+% average to model prediction
+
+arguments
+    paramIndx % index of tissue parameter to find FI for
+    paramGrid % grid of tissue parameters to evaluate FI integral over [Nparam1, Nparam2, ... , Nparams]
+              % i.e. size = [100,100,100,3] for 3 paramater with 100
+              % parameter values each
+    paramSpacings % grid spacing of each parameter
+
+    scan_params % Vector of diffusion scan paramaters [delta, Delta, b/100]
+
+    % Options
+    opts.paramPriors = [] % Prior probability distributions for each parameter
+    opts.modeltype = 'RDI'
+
+end
+
+% Number of tissue parameters
+Nparams = length(size(paramGrid))-1;
+
+% Volum element in parameter space
+dNparam = prod(paramSpacings);
+
+% If param priors not specified, assume uniform distributions
+if isempty(opts.paramPriors)
+    opts.paramPriors = ones(Nparams, max(size(paramGrid)));     
+end
+
+
+
+%% Loop over all parameter values
+
+% Flatten parameter grid
+paramGridDims = size(paramGrid);
+paramGridFlat = reshape( paramGrid, prod(paramGridDims(1:end-1)), Nparams);
+
+% Initialise Fisher information
+FisherInfo = 0;
+
+for paramSetIndx = 1:size(paramGridFlat,1)
+
+    % tissue paramaters
+    params = paramGridFlat(paramSetIndx, :);
+
+    % Check that sum of params < 1
+    if sum(params) ~= 1
+        continue
+    else
+        disp('')
+%         disp(paramSetIndx)
+    end
+
+
+    % === Evaluate signal partial derivative 
+
+    if params(paramIndx) == 0
+        
+        paramsUp = params;
+        paramsUp(paramIndx) = params(paramIndx) + 0.001;
+        paramsUp = (1/sum(paramsUp))*paramsUp;
+
+        signalUp = simulateSignal(paramsUp, scan_params, opts.modeltype);
+        
+        paramsDown = params;
+        signalDown = simulateSignal(paramsDown, scan_params, opts.modeltype);
+
+        partialS = ( signalUp - signalDown )/0.001;
+
+    elseif params(paramIndx) == max(paramGridFlat(:, paramIndx))
+
+        paramsUp = params;
+        signalUp = simulateSignal(paramsUp, scan_params, opts.modeltype);
+
+        paramsDown = params;
+        paramsDown(paramIndx) = paramsDown(paramIndx) - 0.001;
+        paramsDown = (1/sum(paramsDown))*paramsDown;
+        signalDown = simulateSignal(paramsDown, scan_params, opts.modeltype);
+
+        partialS = ( signalUp - signalDown )/0.001;
+
+    else 
+        paramsUp = params;
+        paramsUp(paramIndx) = params(paramIndx) + 0.001;
+        paramsUp = (1/sum(paramsUp))*paramsUp;
+        signalUp = simulateSignal(paramsUp, scan_params, opts.modeltype);
+
+        paramsDown = params;
+        paramsDown(paramIndx) = paramsDown(paramIndx) - 0.001;
+        paramsDown = (1/sum(paramsDown))*paramsDown;
+        signalDown = simulateSignal(paramsDown, scan_params, opts.modeltype);
+        
+        partialS = ( simulateSignal(paramsUp, scan_params, opts.modeltype) - simulateSignal(paramsDown, scan_params, opts.modeltype) )/(2*0.001);
+    end
+
+    % == Square partial derivative
+    partialSsquared = (partialS)^2;
+
+
+    % == Evaluate prior at this parameter set
+
+    % NEED TO DO THIS PROPERLY!!
+
+    fprior = 1;
+
+
+    % == Evaluate integral element and append to FI 
+    FisherInfo = FisherInfo + partialSsquared*fprior*dNparam;
+    
+   
+end

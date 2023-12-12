@@ -9,8 +9,8 @@ arguments
     % Fitting paramaters 
 
     % (for verdict fitting)
-    params.fitting_type = 'RDI' % ('verdict for fitting to induvidual radii, RDI for distribution fitting')
-    params.ncompart = 1 % number of compartments 
+    params.fitting_type = 'verdict' % ('verdict for fitting to induvidual radii, RDI for distribution fitting')
+    params.ncompart = 2 % number of compartments 
     params.Rmin = 0.1
     params.Rmax = 15.1
     params.nR = 17 % Number of radii in original VERDICT fitting
